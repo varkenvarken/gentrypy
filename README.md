@@ -3,6 +3,10 @@
 
 **gentry** is a Python package for representing and manipulating generic tree structures with support for extensible child groups, visitor patterns, and convenient representations (including Markdown and Mermaid diagrams).
 
+## AI slop
+
+this readme and the API docs were created with copilot for now. And quite frankly, it's nearly unreadable. bear with me, i will rewrite it in the near future.
+
 ## Features
 
 - **Generic Tree Structure**:  
