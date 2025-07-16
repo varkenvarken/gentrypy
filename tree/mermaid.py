@@ -30,6 +30,8 @@ class Style(StrEnum):
     operator = auto()
     variable = auto()
     choice = auto()
+    subgraph_even = auto()
+    subgraph_odd = auto()
 
 
 class Mermaid:
@@ -48,9 +50,11 @@ class Mermaid:
 
     def __init__(
         self,
-        shape: Shape|None = None,  # Shape and style can be overridden on a per instance basis as well
-        style: Style|None = None,
-        include_properties = None
+        shape: (
+            Shape | None
+        ) = None,  # Shape and style can be overridden on a per instance basis as well
+        style: Style | None = None,
+        include_properties=None,
     ) -> None:
         self._ishape = shape
         self._istyle = style
@@ -72,6 +76,8 @@ class Mermaid:
         Style.operator: "font-weight:bold,font-size:20px",
         Style.constant: "color:#3a3",
         Style.variable: "color:#a33",
+        Style.subgraph_even: "fill:#eff",
+        Style.subgraph_odd: "fill:#eee",
     }
 
     def __str__(self, parent_index=0) -> str:
@@ -86,17 +92,20 @@ class Mermaid:
 
         sep = ",\\n"  # for f-strings prior to python 3.13 we need to take the backslash out of the string
         nl = "\\n"
-        include_properties = self._include_properties # class var
-        if self._iinclude_properties is not None:     # override if instance variable is not None
+        include_properties = self._include_properties  # class var
+        if (
+            self._iinclude_properties is not None
+        ):  # override if instance variable is not None
             include_properties = self._iinclude_properties
         if include_properties:  # neither None or False
-            props = [f'{k}={v}' for k,v in self.properties.items()]
+            props = [f"{k}={v}" for k, v in self.properties.items()]
             props = f"{nl}({sep.join(props)})"
         else:
             props = ""
 
         name = f"{name}{props}"
 
+        indent = "    " * (parent_index + 1)
         pstyle = self._style
         if self._istyle is not None:
             pstyle = self._istyle
@@ -115,14 +124,21 @@ class Mermaid:
 
         # calculate the right hand parts (or children)
         cs = []
-        fs = []
 
+        subgraphstyle = Style.subgraph_even if parent_index % 2 else Style.subgraph_odd
         for group, children in self._children.items():
+            groupid = f"subgraph{Mermaid._index}"
+            Mermaid._index += 1
+            groupstart = f"subgraph {groupid}[{group}]"
+
+            cs.append(
+                f"{indent}{groupid}:::{subgraphstyle}\n{indent}{p} --> {groupid}\n{indent}{groupstart}\n{indent}        direction TB\n"
+            )
+
             for i, child in enumerate(children):
                 if child is None:
                     continue
                 Mermaid._index += 1
-                # childstyle = "" if child.style == Style.none else f":::{child.style}"
 
                 node_name = child.__class__.__name__
                 if hasattr(child, "label") and child.label is not None:
@@ -130,11 +146,13 @@ class Mermaid:
                 else:
                     childname = node_name
 
-                include_properties = child._include_properties # class var
-                if child._iinclude_properties is not None:     # override if instance variable is not None
+                include_properties = child._include_properties  # class var
+                if (
+                    child._iinclude_properties is not None
+                ):  # override if instance variable is not None
                     include_properties = child._iinclude_properties
                 if include_properties:  # neither None or False
-                    props = [f'{k}={v}' for k,v in child.properties.items()]
+                    props = [f"{k}={v}" for k, v in child.properties.items()]
                     props = f"{nl}({sep.join(props)})"
                 else:
                     props = ""
@@ -155,12 +173,13 @@ class Mermaid:
                 if cshape is None or cshape is Shape.none:
                     cshape = Shape.rounded
 
-                cs.append(
-                    f'    {p} --> {child.__class__.__name__}{self._index}{childstyle}@{{shape: {cshape}, label: "{self._mermaid_safe(childname)}"}}'
-                )
-                leaf = child.is_leaf()
-                if not leaf:
-                    fs.append(child.__str__(parent_index=self._index))
+                if child.is_leaf():
+                    c = f'{indent}{child.__class__.__name__}{self._index}{childstyle}@{{shape: {cshape}, label: "{self._mermaid_safe(childname)}"}}'
+                    cs.append(c)
+                else:
+                    cs.append(child.__str__(parent_index=parent_index+1))
+
+            cs.append(f"{indent}end")
 
         prolog = ""
         epilog = ""
@@ -173,4 +192,4 @@ class Mermaid:
             prolog = f"```mermaid\ngraph TD\n\t{styles}\n\n"
             epilog = "\n```"
 
-        return prolog + ("\n".join(cs) + "\n" + "\n".join(fs)) + epilog
+        return prolog + ("\n".join(cs)) + epilog
