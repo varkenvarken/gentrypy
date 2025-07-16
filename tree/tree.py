@@ -17,6 +17,8 @@ class _MetaTree(type):
                     raise AttributeError(f"_groups item {group} starts with underscore")
                 elif not group.isidentifier():
                     raise AttributeError(f"_groups item {group} not a valid python identifier")
+                elif group in {"label", "properties"}:
+                    raise AttributeError(f"_groups item {group} is a reserved name")
         return super().__new__(cls, clsname, bases, attrs, **kwargs)
    
 class Tree(metaclass=_MetaTree):
@@ -43,11 +45,15 @@ class Tree(metaclass=_MetaTree):
         children: (
             defaultdict[str, list["Tree"]] | dict[str, list["Tree"]] | None
         ) = None,
+        properties: dict|None = None,
+        *args, **kwargs
     ):
         self.label = label
         self._children: defaultdict[str, list[Tree]] = (
             defaultdict(list) if children is None else defaultdict(list, **children)
         )
+        self.properties = {} if properties is None else properties
+        super(Tree, self).__init__(*args, *kwargs)   # executes next __init__() in MRO, see: https://stackoverflow.com/a/6099026
 
     def __getattr__(self, name: str) -> "list[Tree]":
         """
@@ -78,7 +84,7 @@ class Tree(metaclass=_MetaTree):
         return f"{self.__class__.__name__}(label={self.label}, groups={self._groups})"
 
     def is_leaf(self) -> bool:
-        return sum(len(group) for group in self._children) > 0
+        return sum(len(group) for group in self._children.values()) == 0
 
 class Visitor:
     def __init__(self, root: Tree, strict: bool = False) -> None:

@@ -140,17 +140,17 @@ class TestTree:
         class MyTree(Tree):
             _groups = {"kids"}
 
-        # A node with no children should not be a leaf (sum == 0)
+        # A node with no children should be a leaf
         t = MyTree(label="root")
-        assert t.is_leaf() is False
+        assert t.is_leaf()
 
-        # A node with one child in a group should be a leaf (sum > 0)
+        # A node with one child in a group shouldn't be a leaf
         child = MyTree(label="child")
         t.kids.append(child)
-        assert t.is_leaf() is True
+        assert not t.is_leaf()
 
         # A node with multiple children in multiple groups
         t2 = MyTree(label="root2")
         t2.kids.append(MyTree(label="c1"))
         t2.kids.append(MyTree(label="c2"))
-        assert t2.is_leaf() is True
+        assert not t2.is_leaf()

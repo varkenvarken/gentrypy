@@ -1,18 +1,23 @@
 # just an example on how to use the Tree class
 
+from collections import defaultdict
 from .tree import Tree, Count
+from .mermaid import Mermaid, Shape, Style
 
-class Family(Tree):...
+class Family(Tree, Mermaid):...
 
-class Person(Tree):
+class Person(Tree, Mermaid):
     _groups = { "children"}
     
-class GrandMother(Person):...
+class GrandMother(Person):
+    _style = Style.function
+    _shape = Shape.braces
 
 class Mother(Person):
     _groups = {"girls", "boys"}
  
-class Child(Person):...
+class Child(Person):
+    _include_properties = True
 
 class FamilyCount(Count):
     """
@@ -25,11 +30,11 @@ class FamilyCount(Count):
 # define a few children  
 c1 = Child("Alice")
 c2 = Child("Bob")
-c3 = Child("Cherryl")
+c3 = Child("Cherryl", properties={"chess master": "ELO 2235"})
 c4 = Child("Dick")
 c5 = Child("Ellen")
 c6 = Child("Fergal")
-c7 = Child("Gladys")
+c7 = Child("Gladys", properties={"drivers license": 2023, "nose piercing": 2024})
 c8 = Child("Hank")
 
 # Mothers have girls and boys attributes defined, so those can be assigned directly
@@ -58,3 +63,4 @@ counter = FamilyCount(f1, strict=False)
 
 assert counter.count() == 11
 
+print(f1)
