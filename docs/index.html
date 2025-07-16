@@ -1,4 +1,190 @@
-<html>
-    <head></head>
-    <body><h1>placeholder</h1></body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>gentry API Reference</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; background: #fafcff; color: #222; }
+        h1, h2, h3 { color: #274472; }
+        code, pre { background: #f4f7fa; padding: 2px 6px; border-radius: 3px; }
+        .class-block { margin-bottom: 2em; }
+        .docstring { color: #444; margin-bottom: 1em; }
+        .signature { color: #1e7fc5; }
+        .section { margin-bottom: 2em; }
+        ul { margin: 0 0 1em 1.5em; }
+    </style>
+</head>
+<body>
+    <h1>gentry Python Package API Reference</h1>
+    <h2>This documentation is currently AI genrated and unchecked</h2>
+    <p>
+        <b>gentry</b> is a Python package for representing and manipulating generic tree structures with support for extensible child groups, visitor patterns, and convenient representations (including Markdown and Mermaid diagrams).
+    </p>
+
+    <h2>Core Modules</h2>
+    <ul>
+        <li><b>gentry.tree</b> – Core tree and visitor classes</li>
+        <li><b>gentry.mermaid</b> – Mermaid/Markdown export utilities</li>
+    </ul>
+
+    <hr>
+
+    <div class="section">
+    <h2>gentry.tree</h2>
+
+    <div class="class-block">
+        <h3><code>class Tree</code></h3>
+        <div class="docstring">
+            <b>Generic tree node supporting arbitrary child groups and properties.</b>
+        </div>
+        <pre class="signature">Tree(label: str, children: dict[str, list[Tree]] | None = None, properties: dict | None = None, ...)</pre>
+        <ul>
+            <li><b>label</b>: Node label (string).</li>
+            <li><b>children</b>: Dictionary of group names to lists of children.</li>
+            <li><b>properties</b>: Optional node attributes.</li>
+        </ul>
+        <b>Public methods:</b>
+        <ul>
+            <li>
+                <code>__repr__(self) → str</code><br>
+                String representation of the node, showing class, label, and groups.
+            </li>
+            <li>
+                <code>is_leaf(self) → bool</code><br>
+                Returns <code>True</code> if the node has no children in any group.
+            </li>
+            <li>
+                <code>__getattr__(self, name: str) → list[Tree]</code><br>
+                Access child group by name as an attribute.
+            </li>
+            <li>
+                <code>__setattr__(self, name, value)</code><br>
+                Set attribute or child group.
+            </li>
+        </ul>
+        <div class="docstring">
+            <i>
+                <b>Metaclass:</b> <code>_MetaTree</code> ensures that subclasses define <code>_groups</code> as a set of valid group names.
+            </i>
+        </div>
+    </div>
+
+    <div class="class-block">
+        <h3><code>class Visitor</code></h3>
+        <div class="docstring">
+            <b>Visitor pattern for traversing trees and applying operations.</b>
+        </div>
+        <pre class="signature">Visitor(root: Tree, strict: bool = False)</pre>
+        <ul>
+            <li><b>root</b>: The tree to traverse.</li>
+            <li><b>strict</b>: If true, requires exact visitor methods for each node type.</li>
+        </ul>
+        <b>Public methods:</b>
+        <ul>
+            <li>
+                <code>visit(self)</code><br>
+                Traverse the tree and apply the visitor methods.
+            </li>
+        </ul>
+        <b>Internal methods:</b>
+        <ul>
+            <li><code>_get_visitor(self, tree: Tree)</code> – Finds the appropriate visitor method for a node.</li>
+            <li><code>_visit(self, tree: Tree)</code> – Recursively visit children and apply visitor.</li>
+        </ul>
+    </div>
+
+    <div class="class-block">
+        <h3><code>class Count(Visitor)</code></h3>
+        <div class="docstring">
+            <b>Counts the total number of nodes in a tree.</b>
+        </div>
+        <b>Public methods:</b>
+        <ul>
+            <li>
+                <code>count(self) → int</code><br>
+                Returns the total node count in the tree.
+            </li>
+        </ul>
+        <b>Internal/static:</b>
+        <ul>
+            <li>
+                <code>_do_count(self, tree: Tree)</code><br>
+                Returns 1 for each node (override for custom counting).
+            </li>
+            <li>
+                <code>_sum(d)</code><br>
+                Recursively sum node counts from nested results.
+            </li>
+        </ul>
+    </div>
+    </div>
+
+    <div class="section">
+    <h2>gentry.mermaid</h2>
+    <div class="class-block">
+        <h3><code>class Shape</code> (enum)</h3>
+        <div class="docstring">
+            <b>Shape types for Mermaid diagram nodes (rounded, rect, stadium, etc).</b>
+        </div>
+    </div>
+    <div class="class-block">
+        <h3><code>class Style</code> (enum)</h3>
+        <div class="docstring">
+            <b>Style types for Mermaid diagram nodes (function, keyword, loop, etc).</b>
+        </div>
+    </div>
+    </div>
+
+    <div class="section">
+    <h2>Example Usage</h2>
+    <pre>
+from gentry.tree import Tree, Visitor, Count
+
+class BinaryTree(Tree):
+    _groups = {"left", "right"}
+
+root = BinaryTree(label="root")
+root.left.append(BinaryTree(label="left"))
+root.right.append(BinaryTree(label="right"))
+print(root)
+
+class PrintLabelsVisitor(Visitor):
+    def _do_printlabelsvisitor(self, tree):
+        print(tree.label)
+
+PrintLabelsVisitor(root).visit()
+
+print(Count(root).count())  # Outputs the number of nodes in the tree
+    </pre>
+    </div>
+
+    <div class="section">
+    <h2>Subclassing Example</h2>
+    <pre>
+class Family(Tree, Mermaid): pass
+
+class Person(Tree, Mermaid):
+    _groups = { "children" }
+
+class GrandMother(Person):
+    _style = Style.function
+    _shape = Shape.braces
+
+class Mother(Person):
+    _groups = {"girls", "boys"}
+
+class Child(Person):
+    _include_properties = True
+    </pre>
+    </div>
+
+    <footer>
+        <hr>
+        <p>
+            For more information, see the
+            <a href="https://github.com/varkenvarken/gentrypy">project homepage</a>
+            or the <a href="https://varkenvarken.github.io/gentrypy/">documentation site</a>.
+        </p>
+    </footer>
+</body>
 </html>
