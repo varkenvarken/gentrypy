@@ -1,6 +1,6 @@
 import pytest
 from collections import defaultdict
-from tree.tree import Tree
+from gentry.tree import Tree
 
 
 class TestTree:

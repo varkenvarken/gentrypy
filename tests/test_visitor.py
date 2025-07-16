@@ -1,6 +1,6 @@
 import pytest
 from collections import defaultdict
-from tree.tree import Tree, Visitor, Count
+from gentry.tree import Tree, Visitor, Count
 
 
 class DummyTree(Tree):
