@@ -6,8 +6,8 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
 setup(
-    name="gentry",
-    version="0.0.5",
+    name="gentry"
+    version="0.0.6",
     description="Generic tree with visitors and nice markdown/mermaid representation",
     long_description=long_description,
     long_description_content_type="text/markdown",

@@ -65,3 +65,24 @@ jobs:
       - name: Publish release distributions to PyPI
         # https://github.com/pypa/gh-action-pypi-publish/releases/tag/v1.12.4
         uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
+
+  create-badge:
+    runs-on: ubuntu-latest
+
+    needs:
+        - pypi-publish
+    steps:
+    - uses: actions/checkout@v4
+    - name: Download pypi badge
+    
+      run: |
+        curl -o pypi.svg "https://img.shields.io/pypi/v/gentry"
+    - name: Commit pypi badge
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add pypi.svg
+        git commit -m "Update pypi badge" || echo "No changes to commit"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
