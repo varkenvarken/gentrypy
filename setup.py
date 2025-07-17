@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="gentry",
-    version="0.0.1",
+    version="0.0.5",
     description="Generic tree with visitors and nice markdown/mermaid representation",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -16,11 +16,11 @@ setup(
     author_email="test@example.com",
     license="GPLv3",
     packages=["gentry"],
-    python_requires=">=3.13",
+    python_requires=">=3.11",
     zip_safe=False,
     classifiers=[
         "Development Status :: 3 - Alpha",
-        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.11",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
     ],
