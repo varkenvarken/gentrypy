@@ -104,7 +104,7 @@ class Mermaid:
         Args:
             parent_index (int): The index of the parent node, used for indentation and unique node IDs.
 
-            this is used internally when recursing into the tree. 
+            this is used internally when recursing into the tree.
 
         Returns:
             str: The Mermaid markdown representation of the tree rooted at this node.
@@ -148,7 +148,6 @@ class Mermaid:
         if pshape is None or pshape is Shape.none:
             pshape = Shape.rounded
 
-        
         # calculate the right hand parts (or children)
         cs = []
 
@@ -211,7 +210,7 @@ class Mermaid:
                         c = f'{indent}{child.__class__.__name__}{self._index}{childstyle}@{{shape: {cshape}, label: "{self._mermaid_safe(childname)}"}}'
                         cs.append(c)
                     else:
-                        cs.append(child.__str__(parent_index=parent_index+1))
+                        cs.append(child.__str__(parent_index=parent_index + 1))
 
                 cs.append(f"{indent}end")
 
