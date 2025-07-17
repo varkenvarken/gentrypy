@@ -1,7 +1,10 @@
 # gentry
-![Python](python.svg) [![Test Status](https://github.com/varkenvarken/blenderaddons-ng/actions/workflows/test_all.yml/badge.svg)](https://github.com/varkenvarken/gentrypy/actions/workflows/test_all.yml) ![Coverage](coverage.svg) ![pypi](pypi.svg)
+![Python](https://raw.githubusercontent.com/varkenvarken/gentrypy/refs/heads/main/python.svg) [![Test Status](https://github.com/varkenvarken/blenderaddons-ng/actions/workflows/test_all.yml/badge.svg)](https://github.com/varkenvarken/gentrypy/actions/workflows/test_all.yml) ![Coverage](https://raw.githubusercontent.com/varkenvarken/gentrypy/refs/heads/main/coverage.svg) ![PyPI - Version](https://img.shields.io/pypi/v/gentry)
+
 
 **gentry** is a Python package for representing and manipulating generic tree structures with support for extensible child groups, visitor patterns, and convenient representations (including Markdown and Mermaid diagrams).
+
+The name **gentry** is a weak pun on 'generic tree' that is too lame to explain 😄 (See [Wikipedia](https://en.wikipedia.org/wiki/Gentry))
 
 ## AI slop
 
