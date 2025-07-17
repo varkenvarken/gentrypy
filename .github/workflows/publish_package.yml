@@ -77,8 +77,11 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+        ref: "main"
+    # - run: git checkout HEAD^
     - name: Download pypi badge
-    
       run: |
         curl -o pypi.svg "https://img.shields.io/pypi/v/gentry"
     - name: Commit pypi badge
