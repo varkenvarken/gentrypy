@@ -30,7 +30,7 @@ jobs:
       - name: Build release distributions
         run: |
           # NOTE: put your own distribution build steps here.
-          #python -m pip install build
+          python -m pip install setuptools
           #python -m build
           python setup.py sdist
       - name: Upload distributions
