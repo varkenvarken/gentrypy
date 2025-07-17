@@ -205,7 +205,8 @@ pip install gentry
 
 ## License
 
-This project is licensed under the [GNU GPLv3](LICENSE).
+This project is licensed under the [GNU GPLv3](LICENSE), with the exception of any artwork, including the logo, which are licensed under [CC BY-NC-ND 4.0.](https://creativecommons.org/licenses/by-nc-nd/4.0/)
+
 
 ## Documentation
 
