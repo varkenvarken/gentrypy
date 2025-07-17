@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Module (run as __main__)",
+            "type": "python",
+            "request": "launch",
+            "module": "tree.__main__",
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Current File (with package context)",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        }
+    ]
+}

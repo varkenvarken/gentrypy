@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="gentry",
-    version="0.0.7",
+    version="0.0.8",
     description="Generic tree with visitors and nice markdown/mermaid representation",
     long_description=long_description,
     long_description_content_type="text/markdown",
