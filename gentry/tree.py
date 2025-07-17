@@ -68,7 +68,7 @@ class Tree(metaclass=_MetaTree):
             defaultdict(list) if children is None else defaultdict(list, **children)
         )
         self.properties = {} if properties is None else properties
-        super(Tree, self).__init__(*args, *kwargs)   # executes next __init__() in MRO, see: https://stackoverflow.com/a/6099026
+        super(Tree, self).__init__(*args, **kwargs)   # executes next __init__() in MRO, see: https://stackoverflow.com/a/6099026
 
     def __getattr__(self, name: str) -> "list[Tree]":
         """
@@ -255,7 +255,7 @@ class Count(Visitor):
         return self._sum(results)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
 
     class A(Tree):
         _groups = {"left", "right"}

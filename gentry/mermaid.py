@@ -56,12 +56,29 @@ class Mermaid:
         style: Style | None = None,
         include_properties=None,
     ) -> None:
+        """
+        Initialize a Mermaid mixin instance.
+
+        Args:
+            shape (Shape | None): Optional. Override the default node shape for this instance.
+            style (Style | None): Optional. Override the default node style for this instance.
+            include_properties (bool | None): Optional. Whether to include properties in the node label.
+        """
         self._ishape = shape
         self._istyle = style
         self._iinclude_properties = include_properties
 
     @staticmethod
     def _mermaid_safe(name: str) -> str:
+        """
+        Escape special characters in a node name for Mermaid compatibility.
+
+        Args:
+            name (str): The node name to escape.
+
+        Returns:
+            str: The escaped node name.
+        """
         if name[0] in "-+*":
             return f"\\\\{name}"
         return name
@@ -81,6 +98,17 @@ class Mermaid:
     }
 
     def __str__(self, parent_index=0) -> str:
+        """
+        Render the node and its children as a Mermaid markdown graph.
+
+        Args:
+            parent_index (int): The index of the parent node, used for indentation and unique node IDs.
+
+            this is used internally when recursing into the tree. 
+
+        Returns:
+            str: The Mermaid markdown representation of the tree rooted at this node.
+        """
 
         # calculate the left hand part (or parent)
         # we are very conservative with what a label can be, even though it is supposed to be a string
@@ -120,66 +148,72 @@ class Mermaid:
         if pshape is None or pshape is Shape.none:
             pshape = Shape.rounded
 
-        p = f'{node_name}{parent_index}{style}@{{shape: {pshape}, label: "{self._mermaid_safe(name)}"}}'
-
+        
         # calculate the right hand parts (or children)
         cs = []
 
         subgraphstyle = Style.subgraph_even if parent_index % 2 else Style.subgraph_odd
-        for group, children in self._children.items():
-            groupid = f"subgraph{Mermaid._index}"
-            Mermaid._index += 1
-            groupstart = f"subgraph {groupid}[{group}]"
 
-            cs.append(
-                f"{indent}{groupid}:::{subgraphstyle}\n{indent}{p} --> {groupid}\n{indent}{groupstart}\n{indent}        direction TB\n"
-            )
+        if self.is_leaf() and parent_index == 0:
+            p = f'{node_name}{parent_index}{style}@{{shape: {pshape}, label: "{self._mermaid_safe(name)}"}}'
 
-            for i, child in enumerate(children):
-                if child is None:
-                    continue
+            cs.append(p)
+        else:
+            p = f'{node_name}{parent_index}{style}@{{shape: {pshape}, label: "{self._mermaid_safe(name)}"}}'
+            for group, children in self._children.items():
+                groupid = f"subgraph{Mermaid._index}"
                 Mermaid._index += 1
+                groupstart = f"subgraph {groupid}[{group}]"
 
-                node_name = child.__class__.__name__
-                if hasattr(child, "label") and child.label is not None:
-                    childname = str(child.label)
-                else:
-                    childname = node_name
+                cs.append(
+                    f"{indent}{groupid}:::{subgraphstyle}\n{indent}{p} --> {groupid}\n{indent}{groupstart}\n{indent}        direction TB\n"
+                )
 
-                include_properties = child._include_properties  # class var
-                if (
-                    child._iinclude_properties is not None
-                ):  # override if instance variable is not None
-                    include_properties = child._iinclude_properties
-                if include_properties:  # neither None or False
-                    props = [f"{k}={v}" for k, v in child.properties.items()]
-                    props = f"{nl}({sep.join(props)})"
-                else:
-                    props = ""
+                for i, child in enumerate(children):
+                    if child is None:
+                        continue
+                    Mermaid._index += 1
 
-                childname = f"{childname}{props}"
+                    node_name = child.__class__.__name__
+                    if hasattr(child, "label") and child.label is not None:
+                        childname = str(child.label)
+                    else:
+                        childname = node_name
 
-                cstyle = child._style
-                if child._istyle is not None:
-                    cstyle = child._istyle
-                if cstyle is None or cstyle is Style.none:
-                    childstyle = ""
-                else:
-                    childstyle = f":::{cstyle}"
+                    include_properties = child._include_properties  # class var
+                    if (
+                        child._iinclude_properties is not None
+                    ):  # override if instance variable is not None
+                        include_properties = child._iinclude_properties
+                    if include_properties:  # neither None or False
+                        props = [f"{k}={v}" for k, v in child.properties.items()]
+                        props = f"{nl}({sep.join(props)})"
+                    else:
+                        props = ""
 
-                cshape = child._shape
-                if child._ishape is not None:
-                    cshape = child._ishape
-                if cshape is None or cshape is Shape.none:
-                    cshape = Shape.rounded
+                    childname = f"{childname}{props}"
 
-                if child.is_leaf():
-                    c = f'{indent}{child.__class__.__name__}{self._index}{childstyle}@{{shape: {cshape}, label: "{self._mermaid_safe(childname)}"}}'
-                    cs.append(c)
-                else:
-                    cs.append(child.__str__(parent_index=parent_index+1))
+                    cstyle = child._style
+                    if child._istyle is not None:
+                        cstyle = child._istyle
+                    if cstyle is None or cstyle is Style.none:
+                        childstyle = ""
+                    else:
+                        childstyle = f":::{cstyle}"
 
-            cs.append(f"{indent}end")
+                    cshape = child._shape
+                    if child._ishape is not None:
+                        cshape = child._ishape
+                    if cshape is None or cshape is Shape.none:
+                        cshape = Shape.rounded
+
+                    if child.is_leaf():
+                        c = f'{indent}{child.__class__.__name__}{self._index}{childstyle}@{{shape: {cshape}, label: "{self._mermaid_safe(childname)}"}}'
+                        cs.append(c)
+                    else:
+                        cs.append(child.__str__(parent_index=parent_index+1))
+
+                cs.append(f"{indent}end")
 
         prolog = ""
         epilog = ""
