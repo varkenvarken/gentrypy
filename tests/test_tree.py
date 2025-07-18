@@ -70,13 +70,13 @@ class TestTree:
         class B(A):
             pass
 
-        b = B(label="b")
-        l = B(label="left")
-        r = B(label="right")
-        b.left.append(l)
-        b.right = [r]
-        assert b.left == [l]
-        assert b.right == [r]
+        bnode = B(label="b")
+        lnode = B(label="left")
+        rnode = B(label="right")
+        bnode.left.append(lnode)
+        bnode.right = [rnode]
+        assert bnode.left == [lnode]
+        assert bnode.right == [rnode]
 
     def test_subclass_with_own_groups(self):
         class Base(Tree):
@@ -124,17 +124,17 @@ class TestTree:
 
         a = A(label="a")
         b = B(label="b")
-        l = A(label="left")
-        r = B(label="right")
-        a.left.append(l)
-        b.right.append(r)
-        assert a.left == [l]
-        assert b.right == [r]
+        lnode = A(label="left")
+        rnode = B(label="right")
+        a.left.append(lnode)
+        b.right.append(rnode)
+        assert a.left == [lnode]
+        assert b.right == [rnode]
         with pytest.raises(AttributeError):
             _ = a.right
         with pytest.raises(AttributeError):
             _ = b.left
-        assert b.right == [r]
+        assert b.right == [rnode]
 
     def test_is_leaf(self):
         class MyTree(Tree):

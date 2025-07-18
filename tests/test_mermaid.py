@@ -1,4 +1,4 @@
-import pytest
+import pytest  # noqa: F401 
 from gentry.mermaid import Mermaid, Shape, Style
 from gentry.tree import Tree
 

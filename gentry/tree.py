@@ -246,9 +246,9 @@ class Count(Visitor):
         total = 0
         match d:
             case dict(mapping):
-                total += sum(Count._sum(v) for v in d.values())
+                total += sum(Count._sum(v) for v in mapping.values())
             case list(iterable):
-                total += sum(Count._sum(v) for v in d)
+                total += sum(Count._sum(v) for v in iterable)
             case int(value):
                 total += value
         return total
