@@ -11,12 +11,12 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-python.black-formatter",
 				"bierner.markdown-mermaid",
 				"ms-python.vscode-pylance",
 				"ms-python.python",
 				"ms-python.debugpy",
-				"ritwickdey.LiveServer"
+				"ritwickdey.LiveServer",
+				"charliermarsh.ruff"
 			]
 		}
 	}
