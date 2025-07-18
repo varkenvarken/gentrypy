@@ -235,4 +235,4 @@ Please make sure that any PR:
 - is suitable for inclusion under a GPLv3 license
 - passes all tests
 - provides new unit tests if new functionality is implemented
-- contains only code that is formatted by [black](https://github.com/psf/black) (in the future `pylint` compliance may be required as well )
+- contains only code that is formatted by ruff (with the [default settings](https://docs.astral.sh/ruff/configuration/), import sorting enabled)
