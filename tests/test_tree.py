@@ -154,3 +154,39 @@ class TestTree:
         t2.kids.append(MyTree(label="c1"))
         t2.kids.append(MyTree(label="c2"))
         assert not t2.is_leaf()
+
+    def test_initialization_with_keyword_argument(self):
+        class A(Tree):
+            _groups = {"agroup"}
+
+        child = A(label="child")
+        a = A(label="a", agroup=[child])
+
+        assert a.agroup == [child]
+
+    def test_initialization_with_unknown_keyword_argument(self):
+        class A(Tree):
+            _groups = {"agroup"}
+
+        child = A(label="child")
+        with pytest.raises(TypeError):
+            _ = A(label="a", unknown=[child])
+
+    def test_initialization_with_duplicated_keyword_argument(self):
+        class A(Tree):
+            _groups = {"agroup"}
+
+        child = A(label="child")
+        with pytest.raises(ValueError):
+            _ = A(label="a", agroup=[child], children={"agroup":[child]})
+
+    def test_initialization_with_mixed_group_argument(self):
+        class A(Tree):
+            _groups = {"agroup", "another_group"}
+
+        child1 = A(label="child1")
+        child2 = A(label="child2")
+
+        a = A(label="a", agroup=[child1], children={"another_group":[child2]})
+        assert a.agroup == [child1]
+        assert a.another_group == [child2]

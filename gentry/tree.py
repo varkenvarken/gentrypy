@@ -28,7 +28,7 @@ class _MetaTree(type):
 
 class Tree(metaclass=_MetaTree):
     """
-    A basic Tree object has one attribute "children" which is a defaultdict.
+    A basic Tree object has one attribute "_children" which is a defaultdict.
 
     The keys are group names, the values are lists of Tree objects.
 
@@ -57,7 +57,7 @@ class Tree(metaclass=_MetaTree):
         """
         Initialize a Tree node.
 
-        When subclassing you can initialize the class variabel `_groups` to a set of strings.
+        When subclassing you can initialize the class variable `_groups` to a set of strings.
         Any string in that set can then be used as an attribute of the node and will be used
         as a key of the `_children` attribute.
 
@@ -68,12 +68,26 @@ class Tree(metaclass=_MetaTree):
             properties (dict|None): Optional. Arbitrary properties for this node.
             args: Additional arguments for multiple inheritance.
             kwargs: Additional keyword arguments for multiple inheritance.
+
+        Any keyword arguments that are defined in `_groups` will be added as an entry in `_children`.
+        It is an error to pass a groups of children both as keyword argument and as part of the children argument.
         """
         self.label = label
         self._children: defaultdict[str, list[Tree]] = (
             defaultdict(list) if children is None else defaultdict(list, **children)
         )
         self.properties = {} if properties is None else properties
+
+        remove = set()
+        for k,v in kwargs.items():
+            if k in self._groups and k in self._children:
+                raise ValueError(f"group {k} used in children and as keyword argument")
+            if k in self._groups:
+                self._children[k] = v
+                remove.add(k)
+        for k in remove:
+            del kwargs[k]
+
         super(Tree, self).__init__(
             *args, **kwargs
         )  # executes next __init__() in MRO, see: https://stackoverflow.com/a/6099026

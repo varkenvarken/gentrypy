@@ -51,6 +51,8 @@
                     <li><b>properties</b> (<code>dict|None</code>): Optional. Arbitrary properties for this node.</li>
                     <li><b>*args, **kwargs</b>: Additional arguments for multiple inheritance.</li>
                 </ul>
+                <p>Any keyword arguments that are defined in <code>_groups</code> will be added as an entry in <code>_children</code>.<br>
+                It is an error to pass a groups of children both as keyword argument and as part of the children argument.</p>
             </div>
         </div>
 
