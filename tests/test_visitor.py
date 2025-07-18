@@ -1,5 +1,4 @@
 import pytest
-from collections import defaultdict
 from gentry.tree import Tree, Visitor, Count
 
 
@@ -52,13 +51,13 @@ def test_visitor_get_visitor_strict():
 
     v = MyVisitor(root, strict=True)
     result = v.visit()
-    assert result['MyTree'] == "ok"
-    left_child_group = result['children']["left"]
+    assert result["MyTree"] == "ok"
+    left_child_group = result["children"]["left"]
     assert len(left_child_group) == 1
-    assert left_child_group[0]['MyTree'] == "ok"
-    right_child_group = result['children']["right"]
+    assert left_child_group[0]["MyTree"] == "ok"
+    right_child_group = result["children"]["right"]
     assert len(right_child_group) == 1
-    assert right_child_group[0]['MyTree'] == "ok"
+    assert right_child_group[0]["MyTree"] == "ok"
 
 
 def test_visitor_get_visitor_missing():

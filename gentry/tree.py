@@ -1,26 +1,31 @@
 from collections import defaultdict
 
+
 class _MetaTree(type):
     """
     Ensures that when subclassing Tree, any _groups class variable will be initialized
     with a set of strings that are valid python identifiers that do not start with an underscore.
     """
+
     def __new__(cls, clsname, bases, attrs, **kwargs):
         if "_groups" in attrs:
             value = attrs["_groups"]
             if not isinstance(value, set):
-                raise AttributeError(f"_groups attribute is not a set")
+                raise AttributeError("_groups attribute is not a set")
             for group in value:
                 if not isinstance(group, str):
                     raise AttributeError(f"_groups item {group} is not a str")
                 elif group.startswith("_"):
                     raise AttributeError(f"_groups item {group} starts with underscore")
                 elif not group.isidentifier():
-                    raise AttributeError(f"_groups item {group} not a valid python identifier")
+                    raise AttributeError(
+                        f"_groups item {group} not a valid python identifier"
+                    )
                 elif group in {"label", "properties"}:
                     raise AttributeError(f"_groups item {group} is a reserved name")
         return super().__new__(cls, clsname, bases, attrs, **kwargs)
-   
+
+
 class Tree(metaclass=_MetaTree):
     """
     A basic Tree object has one attribute "children" which is a defaultdict.
@@ -45,8 +50,9 @@ class Tree(metaclass=_MetaTree):
         children: (
             defaultdict[str, list["Tree"]] | dict[str, list["Tree"]] | None
         ) = None,
-        properties: dict|None = None,
-        *args, **kwargs
+        properties: dict | None = None,
+        *args,
+        **kwargs,
     ):
         """
         Initialize a Tree node.
@@ -68,7 +74,9 @@ class Tree(metaclass=_MetaTree):
             defaultdict(list) if children is None else defaultdict(list, **children)
         )
         self.properties = {} if properties is None else properties
-        super(Tree, self).__init__(*args, **kwargs)   # executes next __init__() in MRO, see: https://stackoverflow.com/a/6099026
+        super(Tree, self).__init__(
+            *args, **kwargs
+        )  # executes next __init__() in MRO, see: https://stackoverflow.com/a/6099026
 
     def __getattr__(self, name: str) -> "list[Tree]":
         """
@@ -129,6 +137,7 @@ class Tree(metaclass=_MetaTree):
             bool: True if the node has no children, False otherwise.
         """
         return sum(len(group) for group in self._children.values()) == 0
+
 
 class Visitor:
     def __init__(self, root: Tree, strict: bool = False) -> None:
@@ -235,7 +244,7 @@ class Count(Visitor):
             int: The total sum of all integers found.
         """
         total = 0
-        match (d):
+        match d:
             case dict(mapping):
                 total += sum(Count._sum(v) for v in d.values())
             case list(iterable):
@@ -255,7 +264,7 @@ class Count(Visitor):
         return self._sum(results)
 
 
-if __name__ == "__main__": # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
 
     class A(Tree):
         _groups = {"left", "right"}
