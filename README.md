@@ -1,5 +1,5 @@
 # gentry
-![Python](https://raw.githubusercontent.com/varkenvarken/gentrypy/refs/heads/main/python.svg) [![Test Status](https://github.com/varkenvarken/blenderaddons-ng/actions/workflows/test_all.yml/badge.svg)](https://github.com/varkenvarken/gentrypy/actions/workflows/test_all.yml) ![Coverage](https://raw.githubusercontent.com/varkenvarken/gentrypy/refs/heads/main/coverage.svg) ![PyPI - Version](https://raw.githubusercontent.com/varkenvarken/gentrypy/refs/heads/main/pypi.svg)
+![Python](https://raw.githubusercontent.com/varkenvarken/gentrypy/refs/heads/main/python.svg) [![Test Status](https://github.com/varkenvarken/gentrypy/actions/workflows/test_all.yml/badge.svg)](https://github.com/varkenvarken/gentrypy/actions/workflows/test_all.yml) ![Coverage](https://raw.githubusercontent.com/varkenvarken/gentrypy/refs/heads/main/coverage.svg) ![PyPI - Version](https://raw.githubusercontent.com/varkenvarken/gentrypy/refs/heads/main/pypi.svg)
 
 ![gentry  logo](docs/logo.svg)
 
