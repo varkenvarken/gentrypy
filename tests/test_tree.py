@@ -190,3 +190,28 @@ class TestTree:
         a = A(label="a", agroup=[child1], children={"another_group":[child2]})
         assert a.agroup == [child1]
         assert a.another_group == [child2]
+
+    def test_subclass_with_implicit_groups(self, capsys):
+        class A(Tree):
+            def __init__(self, label: str, group1:list[Tree]=[], group2:list[Tree]=[]):
+                super().__init__(label, children={"group1":group1,"group2":group2})
+
+        # verify that the init definition style is working
+        a1 = A("a1")
+        a2 = A("a2")
+        a3 = A("a3", group1=[a1], group2=[a2])
+
+        assert a3.group1 == [a1]
+        assert a3.group2 == [a2]
+        with pytest.raises(AttributeError):
+            b = a3.group3  # noqa
+
+        # after instantiation with adding children directly, accessing known groups should still work
+        a4 = A("a4")
+        a4.group1.append(a1)
+        a4.group2.append(a2)
+
+        assert a4.group1 == [a1]
+        assert a4.group2 == [a2]
+        with pytest.raises(AttributeError):
+            b = a4.group3  # noqa

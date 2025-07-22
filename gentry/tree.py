@@ -1,10 +1,15 @@
 from collections import defaultdict
 
+from inspect import getfullargspec
+from types import GenericAlias
 
 class _MetaTree(type):
     """
     Ensures that when subclassing Tree, any _groups class variable will be initialized
     with a set of strings that are valid python identifiers that do not start with an underscore.
+
+    Also, any positional parameters of the __init__() function that are annotated with list[Tree]
+    will be added to to _groups (and _groups will be created if necessary)
     """
 
     def __new__(cls, clsname, bases, attrs, **kwargs):
@@ -23,6 +28,13 @@ class _MetaTree(type):
                     )
                 elif group in {"label", "properties"}:
                     raise AttributeError(f"_groups item {group} is a reserved name")
+        if '__init__' in attrs:
+            argspec = getfullargspec(attrs['__init__'])
+            for argname, annotation in argspec.annotations.items():
+                if type(annotation) is GenericAlias and list[Tree] == annotation:
+                    if '_groups' not in attrs:
+                        attrs['_groups'] = set()
+                    attrs['_groups'].add(argname)
         return super().__new__(cls, clsname, bases, attrs, **kwargs)
 
 
@@ -40,6 +52,29 @@ class Tree(metaclass=_MetaTree):
     This setup allows for mixin classes and generic tools like a visitor to rely on the presence of a children
     dict that doesn't change if a Tree class is inherited, yet allow for a more semantically meaningful way of
     accessing groups of children im derived classes.
+
+    A typical example:
+
+        class MyTree(Tree):
+            _groups = {"left", "right"}
+        
+        m = MyTree("root")
+        m.left.append(MyTree("left"))
+
+    Or alternatively:
+
+        class MyTree(Tree):
+            def __init__(self, label: str, left:list[Tree]=[], right:list[Tree]=[]):
+                super().__init__(label, children={"left":left,"right":right})
+
+        m = MyTree("root", left=[MyTree("left")])  # can now pass to constructor and Pylance will know about 'left'
+        m.right.append(MyTree("right"))            # this still works
+
+    This last example is a bit more work to write down, but has the advantage that you can use the groupnames as
+    arguments when calling __init__ and Pylance actually knowing about the type, while attribute access still works.
+
+    So use the latter if you want to be able to initialize a new node while passing initial children directly, or
+    use the first style if you only want to instantiate nodes without children (but still can add children later).
     """
 
     _groups = set()

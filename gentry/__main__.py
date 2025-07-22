@@ -1,8 +1,7 @@
 # just an example on how to use the Tree class
 
-from collections import defaultdict
-from .tree import Tree, Count
-from .mermaid import Mermaid, Shape, Style
+from gentry.tree import Tree, Count
+from gentry.mermaid import Mermaid, Shape, Style
 
 class Family(Tree, Mermaid):...
 
@@ -14,7 +13,9 @@ class GrandMother(Person):
     _shape = Shape.braces
 
 class Mother(Person):
-    _groups = {"girls", "boys"}
+    # _groups = {"girls", "boys"}
+    def __init__(self, label: str, girls:list[Tree]=[], boys:list[Tree]=[]):
+        super().__init__(label)
  
 class Child(Person):
     _include_properties = True
